@@ -23,5 +23,13 @@ exports.createPass = function() { return {passed: true};}
 exports.createResult = function(message) {return {passed: false, message: message}; }
     
 exports.Assert = {
-    IsTrue: function (statement, message){ if(statement) return exports.createPass(); return exports.createResult(message);}
+    IsTrue: function (statement, message){ if(statement) return exports.createPass(); return exports.createResult(message);},
+    And: function (results){
+        
+        for(var i = 0; i < results.length; i++){
+            if(!results[i].passed)
+                return results[i];
+        }
+        return exports.createPass();
+    }
 };
