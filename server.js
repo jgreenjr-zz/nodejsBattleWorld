@@ -48,11 +48,11 @@ function chatMode(stream){
 		return;
 	}
 	else if(playerObject.mode == "standbye"){
-		if(count == 1){
+		/*if(count == 1){
 			playerObject.sendMessage("Not Enough players to engage");
 			playerObject.socket.once("data", playerObject.chatMode);
 			return;
-		}
+		}*/
 	
 		playerObject.mode = "engage";
 		engaged++;
@@ -77,7 +77,7 @@ function findBySocket(socket){
 	return null;
 }
 
-function startGame(){
+function StartGame(){
 	for(var i = 0; i < count; i++)
 	{
 		sockets[i].sendMessage("here we go");
