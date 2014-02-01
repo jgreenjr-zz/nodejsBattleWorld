@@ -5,6 +5,8 @@ testrunner.AddTest("Game is Setup Correctly", GameIsSetupCorrectly);
 testrunner.AddTest("double hit damage test", HitHitHurtsBothWithHalfHitDamage);
 testrunner.AddTest("GetMoveCallShouldRemoveMoveFromMovesList", GetMoveCallShouldRemoveMoveFromMovesList);
 testrunner.AddTest("HitBlockShouldStunOtherPlayer", HitBlockShouldStunOtherPlayer);
+testrunner.AddTest("StunedPlayerReturnsStuned",StunedPlayerReturnsStuned);
+testrunner.AddTest("hittingStunedPlayerShouldResultInFullDamage", hittingStunedPlayerShouldResultInFullDamage)
 testrunner.RunTests();
 
 function GameIsSetupCorrectly(){
@@ -52,7 +54,24 @@ function HitBlockShouldStunOtherPlayer(){
         ]);
 }
 
-function StunedPlayerTakesFullHit(){
- 
+function StunedPlayerReturnsStuned(){
+  var player1 = {stuned: true, moves:["hit"]};
+  
+  var g = game.CreateGame(player1, null);
+  
+  var move = g.GetNextMove(player1);
+  return testrunner.Assert.IsTrue(g.Stuned == move, "Player should be stunned but "+ move);
+}
+
+function hittingStunedPlayerShouldResultInFullDamage(){
+    var player1 = {hitDamage: 2, health: 2, moves:[ "hit"]};
+    var player2 = {hitDamage: 2, health: 2, moves:[ "hit"], stuned:true};
+
+  var g = game.CreateGame(player1, player2);
+  
+  g.EvaluteMove();
+  
+  return testrunner.Assert.IsTrue(player2.health ===0, "total damage not taken");
+    
 }
 
