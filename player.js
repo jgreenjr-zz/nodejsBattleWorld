@@ -7,5 +7,6 @@ exports.CreatePlayer = function (socket, chatMode){
 							setupPlayer: function(name, socket){this.name = name; this.socket = socket;console.log( "user "+ this.myId + " has set name to " + this.name);},
 							chatMode: chatMode,
 							health: 10,
-							hitDamage: 2};
+							hitDamage: 2,
+							GetStatus: function(){ return "----------------\nName:"+this.name+"\nHit Damamge:"+this.hitDamage+"\nHealth:"+this.health+"\n----------------"}};
 }

@@ -95,9 +95,59 @@ function StartGame(){
 
 function playTurn(g){
     
-    /*g.player1.SendStats(player2);
+    var message = g.player1.GetStatus() + "\n"+g.player2.GetStatus();
     
-    g.player1.SendStats(player1);*/
+    
+    g.player1.sendMessage(message);
+    
+    g.player2.sendMessage(message);
+    
+    g.player1.sendMessage("Enter Move 1 of 3 (hit, block):");
+    
+    g.player2.sendMessage("Enter Move 1 of 3 (hit, block):");
+    
+    g.player1.socket.once(getPlayerRole);
+    
+    g.player2.socket.once(getPlayerRole);
+}
+
+function getPlayerRole(stream){
+    var g = findGamePlayerBySocket(this);
+    
+    g.player.moves.push(stream);
+    
+    if(g.player.moves.length < 3){
+        g.player.sendMessage("Send Next Move");
+        g.player.socket.once(getPlayerRole);
+    }
+    else if(g.otherPlayer.moves.length <3){
+        g.player.sendMessage("Waiting for other player");
+        g.player.socket.once(ignoreInGame);
+    }
+    else{
+        while(g.player.moves.length >0){
+            var message = g.game.EvaluteMove();
+            g.player1.sendMessage(message);
+            g.player2.sendMessage(message);
+        }
+        playTurn(g.game);
+    }
+}
+
+function findGamePlayerBySocket(socket){
+    for(var i = 0; i < games.length; i++){
+        if(games[i].player1.socket == socket){
+            return {game: games[i], player: games[i].player1, otherPlayer: games[i].player2};
+        }
+         if(games[i].player2.socket == socket){
+            return {game: games[i], player: games[i].player1, otherPlayer: games[i].player2};
+        }
+    }
+}
+
+function ignoreInGame(stream){
+    var g = findGamePlayerBySocket(this);
+        g.player.socket.once(ignoreInGame);
 }
 
 	

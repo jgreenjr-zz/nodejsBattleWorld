@@ -31,5 +31,13 @@ exports.Assert = {
                 return results[i];
         }
         return exports.createPass();
+    },
+    IsEqual: function(expected, actual){
+        
+        if(expected!=actual)
+        {
+            return exports.createResult("expected: "+expected + "\nActual:" + actual);
+        }
+        return {passed:true};
     }
 };
