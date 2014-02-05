@@ -1,13 +1,13 @@
 var testrunner = require("./testrunner.js");
 var game = require("./game.js");
 
-testrunner.AddTest("Game is Setup Correctly", GameIsSetupCorrectly);
-testrunner.AddTest("double hit damage test", HitHitHurtsBothWithHalfHitDamage);
-testrunner.AddTest("GetMoveCallShouldRemoveMoveFromMovesList", GetMoveCallShouldRemoveMoveFromMovesList);
-testrunner.AddTest("HitBlockShouldStunOtherPlayer", HitBlockShouldStunOtherPlayer);
-testrunner.AddTest("StunedPlayerReturnsStuned",StunedPlayerReturnsStuned);
-testrunner.AddTest("hittingStunedPlayerShouldResultInFullDamage", hittingStunedPlayerShouldResultInFullDamage)
-testrunner.RunTests();
+testrunner.Test("Game is Setup Correctly", GameIsSetupCorrectly);
+testrunner.Test("double hit damage test", HitHitHurtsBothWithHalfHitDamage);
+testrunner.Test("GetMoveCallShouldRemoveMoveFromMovesList", GetMoveCallShouldRemoveMoveFromMovesList);
+testrunner.Test("HitBlockShouldStunOtherPlayer", HitBlockShouldStunOtherPlayer);
+testrunner.Test("StunnedPlayerReturnsStunned",StunnedPlayerReturnsStunned);
+testrunner.Test("hittingStunnedPlayerShouldResultInFullDamage", hittingStunnedPlayerShouldResultInFullDamage)
+
 
 function GameIsSetupCorrectly(){
     var player1 = {playerName: "player1"};
@@ -49,23 +49,23 @@ function HitBlockShouldStunOtherPlayer(){
     g.EvaluteMove();
     
     return testrunner.Assert.And([
-        testrunner.Assert.IsTrue(player2.stuned, "Player was not stuned")
+        testrunner.Assert.IsTrue(player2.stunned, "Player was not stunned")
         
         ]);
 }
 
-function StunedPlayerReturnsStuned(){
-  var player1 = {stuned: true, moves:["hit"]};
+function StunnedPlayerReturnsStunned(){
+  var player1 = {stunned: true, moves:["hit"]};
   
   var g = game.CreateGame(player1, null);
   
   var move = g.GetNextMove(player1);
-  return testrunner.Assert.IsTrue(g.Stuned == move, "Player should be stunned but "+ move);
+  return testrunner.Assert.IsTrue(g.Stunned == move, "Player should be stunned but "+ move);
 }
 
-function hittingStunedPlayerShouldResultInFullDamage(){
+function hittingStunnedPlayerShouldResultInFullDamage(){
     var player1 = {hitDamage: 2, health: 2, moves:[ "hit"]};
-    var player2 = {hitDamage: 2, health: 2, moves:[ "hit"], stuned:true};
+    var player2 = {hitDamage: 2, health: 2, moves:[ "hit"], stunned:true};
 
   var g = game.CreateGame(player1, player2);
   

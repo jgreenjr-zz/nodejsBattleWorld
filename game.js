@@ -11,7 +11,7 @@ var gameObject = function(player1, player2){
     this.player2 = player2;
     this.Hit = "hit";
     this.Block = "block";
-    this.Stuned = "stuned";
+    this.Stunned = "stunned";
     
     this.EvaluteMove = function(){
         var player1Move = this.GetNextMove(player1) ;
@@ -23,18 +23,18 @@ var gameObject = function(player1, player2){
             return "Both Players hit, half damage delivered to both";
         }
         else if(player1Move == this.Hit && player2Move == this.Block){
-           this.player1.stuned = true;
-            return this.player1.name + " has been stuned";
+           this.player1.stunned = true;
+            return this.player1.name + " has been stunned";
         }
         else if(player1Move == this.Block && player2Move == this.Hit){
-            this.player2.stuned= true;
-            return this.player2.name + " has been stuned";
+            this.player2.stunned= true;
+            return this.player2.name + " has been stunned";
         }
-        else if(player1Move == this.Stuned && player2Move == this.Hit){
+        else if(player1Move == this.Stunned && player2Move == this.Hit){
             this.player1.health -= this.player2.hitDamage;
             return this.player1.name + " has taken damage";
         }
-        else if(player2Move == this.Stuned && player1Move == this.Hit){
+        else if(player2Move == this.Stunned && player1Move == this.Hit){
             this.player2.health -= this.player1.hitDamage;
             return this.player2.name + " has taken damage";
         }
@@ -42,7 +42,7 @@ var gameObject = function(player1, player2){
     };
     
     this.GetNextMove = function (player){
-        var move = player.stuned ? this.Stuned : player.moves[0];
+        var move = player.stunned ? this.Stunned : player.moves[0];
         
         var newMoves = [];
         for(var i = 1; i < player.moves.length; i++){
@@ -52,4 +52,9 @@ var gameObject = function(player1, player2){
         
         return move;
     };
+    
+    this.IsOver = function(){
+        return false;
+    }
+    
 };

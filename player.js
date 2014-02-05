@@ -8,5 +8,5 @@ exports.CreatePlayer = function (socket, chatMode){
 							chatMode: chatMode,
 							health: 10,
 							hitDamage: 2,
-							GetStatus: function(){ return "----------------\nName:"+this.name+"\nHit Damamge:"+this.hitDamage+"\nHealth:"+this.health+"\n----------------"}};
+							GetStatus: function(){ var stunnedMessage = this.stunned ? "STUNNED!!\n" : ""; return "----------------\nName:"+this.name+"\nHit Damamge:"+this.hitDamage+"\nHealth:"+this.health+"\n"+stunnedMessage+"----------------";}};
 }

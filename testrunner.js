@@ -18,6 +18,17 @@ exports.RunTests = function(){
     
 }
 
+exports.Test = function (text, test){
+     console.log("Running "+ text);
+     var result = test();
+        
+     
+     if(result.passed)
+            console.log("Result: Passed");
+        else
+            console.log("Result: Failed: " + result.message);
+}
+
 exports.createPass = function() { return {passed: true};}
 
 exports.createResult = function(message) {return {passed: false, message: message}; }
