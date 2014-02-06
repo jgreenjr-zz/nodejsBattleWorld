@@ -14,24 +14,33 @@ var inter = Readline.createInterface( {input: process.stdin,
   player2.sendMessage = newSendMessage;
   var gameObj = game.CreateGame(player1, player2);
   
-  inter.question("player1 name:", function(stream){ player1.setupPlayer(stream.toString(), null) 
   
-  inter.question("player2 name:", function(stream){ player2.setupPlayer(stream.toString(), null) 
   
+  function playerTurn(){
+     
  
        var message = gameObj.player1.GetStatus() + "\n"+gameObj.player2.GetStatus();
     
     
     gameObj.player1.sendMessage(message);
   
-    inter.question(player1.name+" enter your move (hit, block): ", function(stream){ player1.moves.push(stream.toString(), null)
+    inter.question(player1.name+" enter your move (hit, block): ", function(stream){ player1.moves = []; player1.moves.push(stream.toString(), null)
     
-    inter.question(player2.name+" enter your move (hit, block): ", function(stream){ player2.moves.push(stream.toString(), null) 
+    inter.question(player2.name+" enter your move (hit, block): ", function(stream){ player2.moves = []; player2.moves.push(stream.toString(), null) 
     
-    gameObj.EvaluteMove();
+    console.log(gameObj.EvaluteMove());
+    if(!gameObj.IsOver())
+        playerTurn();
     });
     });
+    
+    
   
+  }
+  
+  inter.question("player1 name:", function(stream){ player1.setupPlayer(stream.toString(), null) 
+  
+  inter.question("player2 name:", function(stream){ player2.setupPlayer(stream.toString(), null) 
+  playerTurn();
   });
   });
-  

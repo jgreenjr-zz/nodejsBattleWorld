@@ -1,6 +1,7 @@
 var testrunner = require("./testrunner.js");
 var game = require("./game.js");
-
+var player = require("./player.js");
+testrunner.PassOff=true;
 testrunner.Test("Game is Setup Correctly", GameIsSetupCorrectly);
 testrunner.Test("double hit damage test", HitHitHurtsBothWithHalfHitDamage);
 testrunner.Test("GetMoveCallShouldRemoveMoveFromMovesList", GetMoveCallShouldRemoveMoveFromMovesList);
@@ -75,3 +76,43 @@ function hittingStunnedPlayerShouldResultInFullDamage(){
     
 }
 
+testrunner.Test("StunnedPlayerShouldBeUnstunedAfterTurn", function(){
+    var player1 = {hitDamage: 2, health: 2, moves:[ "hit"]};
+    var player2 = {hitDamage: 2, health: 2, moves:[ "hit"], stunned:true};
+
+  var g = game.CreateGame(player1, player2);
+  
+  g.EvaluteMove();
+  
+  return testrunner.Assert.IsTrue(!player2.stunned , "player is still stunned");
+    
+})
+
+
+testrunner.Test("",function (){
+  var player1 = {moves:[]};
+    player1.moves.push("block");
+    
+    var g = game.CreateGame(player1, null);
+    var move = g.GetNextMove(player1);
+    player1.moves.push("hit")
+    var move2 = g.GetNextMove(player1);
+    return testrunner.Assert.And([
+        testrunner.Assert.IsTrue(move == "block", move),
+        testrunner.Assert.IsTrue(move2 == "hit" , move2)]
+        );
+    
+})
+
+testrunner.Test("withPlayerObjectTest", function(){
+    var player1 = player.CreatePlayer(null, null);
+    var g = game.CreateGame(player1, null);
+    player1.moves.push("block")
+    var move = g.GetNextMove(player1);
+    player1.moves.push("hit")
+    var move2 = g.GetNextMove(player1);
+    return testrunner.Assert.And([
+        testrunner.Assert.IsTrue(move == "block", move),
+        testrunner.Assert.IsTrue(move2 == "hit" , move2)]
+        );
+})

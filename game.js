@@ -16,7 +16,6 @@ var gameObject = function(player1, player2){
     this.EvaluteMove = function(){
         var player1Move = this.GetNextMove(player1) ;
         var player2Move = this.GetNextMove(player2) ;
-        //console.log(player1Move + player2Move);
         if(player1Move == this.Hit && player2Move == this.Hit){
             this.player1.health -= this.player2.hitDamage * 0.5;
             this.player2.health -= this.player1.hitDamage * 0.5;
@@ -41,14 +40,11 @@ var gameObject = function(player1, player2){
         return "Neither action result in change of state";
     };
     
-    this.GetNextMove = function (player){
-        var move = player.stunned ? this.Stunned : player.moves[0];
+    this.GetNextMove = function (playerObj){
+        var move = playerObj.stunned ? this.Stunned : playerObj.moves[0];
+        playerObj.stunned=false;
         
-        var newMoves = [];
-        for(var i = 1; i < player.moves.length; i++){
-            newMoves.push(player.moves[i]);
-        }
-        player.moves = newMoves;
+        playerObj.moves.splice(0,1);
         
         return move;
     };

@@ -1,5 +1,5 @@
 var tests = [];
-
+exports.PassOff = false;
 exports.AddTest = function(text, test)
 {
     tests.push({text: text, test: test});
@@ -19,14 +19,14 @@ exports.RunTests = function(){
 }
 
 exports.Test = function (text, test){
-     console.log("Running "+ text);
+     
      var result = test();
         
      
-     if(result.passed)
-            console.log("Result: Passed");
-        else
-            console.log("Result: Failed: " + result.message);
+     if(result.passed && !exports.PassOff)
+            console.log(text+"-Result: Passed");
+        else if(!result.passed)
+            console.log(text+"-Result: Failed: " + result.message);
 }
 
 exports.createPass = function() { return {passed: true};}
