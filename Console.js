@@ -19,25 +19,47 @@ var inter = Readline.createInterface( {input: process.stdin,
   function playerTurn(){
      
  
-       var message = gameObj.player1.GetStatus() + "\n"+gameObj.player2.GetStatus();
+ player1.moves = [];
+ player2.moves =[];
+var message = gameObj.player1.GetStatus() + "\n"+gameObj.player2.GetStatus();
     
     
     gameObj.player1.sendMessage(message);
   
-    inter.question(player1.name+" enter your move (hit, block): ", function(stream){ player1.moves = []; player1.moves.push(stream.toString(), null)
-    
-    inter.question(player2.name+" enter your move (hit, block): ", function(stream){ player2.moves = []; player2.moves.push(stream.toString(), null) 
-    
-    console.log(gameObj.EvaluteMove());
-    if(!gameObj.IsOver())
-        playerTurn();
-    });
-    });
+    collectPlayer1();
     
     
   
   }
   
+  function collectPlayer1(){
+  inter.question(player1.name+" enter your move (hit, block): ", function(stream){ player1.moves.push(stream.toString())
+    if(player1.moves.length < 3){
+        collectPlayer1();
+        return;
+    }
+    
+    collectPlayer2();
+    });
+  }
+  
+  function collectPlayer2(){
+  inter.question(player2.name+" enter your move (hit, block): ", function(stream){ player2.moves.push(stream.toString()) 
+    if(player2.moves.length <3){
+        collectPlayer2();
+        return;
+    }
+    
+    var results = gameObj.EvaluteAllMoves();
+    for(var i = 0; i < results.length; i++)
+        console.log(results[i]);
+    if(!gameObj.IsOver())
+       { playerTurn();
+        return;}
+        console.log(gameObj.GetResults());
+        process.kill();
+    });
+  }
   inter.question("player1 name:", function(stream){ player1.setupPlayer(stream.toString(), null) 
   
   inter.question("player2 name:", function(stream){ player2.setupPlayer(stream.toString(), null) 

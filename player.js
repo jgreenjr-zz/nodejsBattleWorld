@@ -9,5 +9,7 @@ exports.CreatePlayer = function (socket, chatMode){
 							health: 10,
 							hitDamage: 2,
 							moves:[],
-							GetStatus: function(){ var stunnedMessage = this.stunned ? "STUNNED!!\n" : ""; return "----------------\nName:"+this.name+"\nHit Damamge:"+this.hitDamage+"\nHealth:"+this.health+"\n"+stunnedMessage+"----------------";}};
+							GetStatus: function(){ var stunnedMessage = this.stunned ? "STUNNED!!\n" : ""; return "----------------\nName:"+this.name+"\nHit Damamge:"+this.hitDamage+"\nHealth:"+this.health+"\n"+stunnedMessage+"----------------";},
+							TakeDamage: function(damage){this.health-= damage; if(this.health < 0) this.health = 0;}
+    }
 }

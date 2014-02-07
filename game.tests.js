@@ -21,14 +21,17 @@ function GameIsSetupCorrectly(){
 }
 
 function HitHitHurtsBothWithHalfHitDamage(){
-    var player1 = {hitDamage: 2, health: 2, moves:[ "hit"]};
-    var player2 = {hitDamage: 2, health: 2, moves:[ "hit"]};
+    var player1 = player.CreatePlayer(null, null);
+    var player2 = player.CreatePlayer(null, null);
+    
+    player1.moves.push("hit");
+    player2.moves.push("hit");
     
     var g = game.CreateGame(player1, player2);
     
     g.EvaluteMove();
     
-    return testrunner.Assert.And([testrunner.Assert.IsTrue(player1.health==1, "player 1 damage not calculated Correctly"), testrunner.Assert.IsTrue(player2.health==1, "player 2 damage not calculated Correctly")]);
+    return testrunner.Assert.And([testrunner.Assert.IsTrue(player1.health==9, "player 1 damage not calculated Correctly"), testrunner.Assert.IsTrue(player2.health==9, "player 2 damage not calculated Correctly")]);
 }
 
 function GetMoveCallShouldRemoveMoveFromMovesList(){
@@ -66,19 +69,19 @@ function StunnedPlayerReturnsStunned(){
 
 function hittingStunnedPlayerShouldResultInFullDamage(){
     var player1 = {hitDamage: 2, health: 2, moves:[ "hit"]};
-    var player2 = {hitDamage: 2, health: 2, moves:[ "hit"], stunned:true};
-
+    var player2 = player.CreatePlayer(null, null);
+    player2.stunned = true;
   var g = game.CreateGame(player1, player2);
   
   g.EvaluteMove();
   
-  return testrunner.Assert.IsTrue(player2.health ===0, "total damage not taken");
+  return testrunner.Assert.IsEqual(player2.health,8);
     
 }
 
 testrunner.Test("StunnedPlayerShouldBeUnstunedAfterTurn", function(){
     var player1 = {hitDamage: 2, health: 2, moves:[ "hit"]};
-    var player2 = {hitDamage: 2, health: 2, moves:[ "hit"], stunned:true};
+    var player2 = player.CreatePlayer(null, null);
 
   var g = game.CreateGame(player1, player2);
   
@@ -116,3 +119,80 @@ testrunner.Test("withPlayerObjectTest", function(){
         testrunner.Assert.IsTrue(move2 == "hit" , move2)]
         );
 })
+
+testrunner.Test("RunAllMoves", function(){
+    var player1 = player.CreatePlayer(null, null);
+    player1.setupPlayer("test1", null);
+    var player2 = player.CreatePlayer(null, null);
+    player2.setupPlayer("test2", null);
+    
+    player1.moves.push("hit", "hit", "hit");
+    
+    player2.moves.push("hit", "hit", "hit");
+    
+    var g = game.CreateGame(player1, player2);
+    var results = g.EvaluteAllMoves();
+    
+    return testrunner.Assert.IsEqual(3, results.length);
+    
+})
+
+testrunner.Test("ConvertShort", function(){
+    var player1 = {moves:["b", "h"]};
+    
+    var g = game.CreateGame(player1, null);
+    var move1 = g.GetNextMove(player1);
+    var move2 = g.GetNextMove(player1);
+    
+    return testrunner.Assert.And([
+        testrunner.Assert.IsEqual(g.Block, move1),
+        testrunner.Assert.IsEqual(g.Hit, move2)
+        ])
+});
+
+testrunner.Test("Game is Over", function(){
+    var player1 = player.CreatePlayer(null, null);
+    var player2 = player.CreatePlayer(null, null);
+    
+    player1.health = 0;
+    
+    var g = game.CreateGame(player1, player2);
+    
+    return testrunner.Assert.IsTrue(g.IsOver(), "Not Over");
+})
+
+testrunner.Test("Game results: Player 1", function(){
+    var player1 = player.CreatePlayer(null, null);
+    var player2 = player.CreatePlayer(null, null);
+    
+    player1.health = 0;
+    
+    var g = game.CreateGame(player1, player2);
+    
+    return testrunner.Assert.IsEqual(player1.name+" has been defeated!", g.GetResults());
+});
+
+testrunner.Test("Game results: Player 2", function(){
+    var player1 = player.CreatePlayer(null, null);
+    var player2 = player.CreatePlayer(null, null);
+    
+    player2.health = 0;
+    
+    var g = game.CreateGame(player1, player2);
+    
+    return testrunner.Assert.IsEqual(player2.name+" has been defeated!", g.GetResults());
+});
+
+
+testrunner.Test("Game results: Player 1 and 2", function(){
+    var player1 = player.CreatePlayer(null, null);
+    var player2 = player.CreatePlayer(null, null);
+    
+    player2.health = 0;
+    
+    player1.health = 0;
+    
+    var g = game.CreateGame(player1, player2);
+    
+    return testrunner.Assert.IsEqual("undefined and undefined's battle has ended in a draw", g.GetResults());
+});
