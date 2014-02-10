@@ -10,6 +10,7 @@ exports.CreatePlayer = function (chatMode){
 		hitDamage: 2,
 		moves:[],
 		GetStatus: function(){ var stunnedMessage = this.stunned ? "STUNNED!!\n" : ""; return "----------------\nName:"+this.name+"\nHit Damamge:"+this.hitDamage+"\nHealth:"+this.health+"\n"+stunnedMessage+"----------------";},
-		TakeDamage: function(damage){this.health-= damage; if(this.health < 0) this.health = 0;}
-    }
-}
+		TakeDamage: function(damage){this.health-= damage; if(this.health < 0) this.health = 0;},
+		IsComputerPlayer:false
+    };
+};

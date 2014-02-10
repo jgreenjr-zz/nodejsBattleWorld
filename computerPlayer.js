@@ -7,9 +7,13 @@ exports.CreateComputerPlayer = function (){
     returnValue.sendMessage = function(message){};
     
     returnValue.GetMoves = function(p){
+        var rv = [];
         if(p.stunned)
-            return exports.StunnedMoves[Math.floor(Math.random()*exports.StunnedMoves.length)];
-        return exports.StandardMoves[Math.floor(Math.random()*exports.StandardMoves.length)];
+            rv =  exports.StunnedMoves[Math.floor(Math.random()*exports.StunnedMoves.length)];
+        else
+            rv = exports.StandardMoves[Math.floor(Math.random()*exports.StandardMoves.length)];
+            
+            return rv.slice();
     }
     
     returnValue.IsComputerPlayer = true;
@@ -27,8 +31,5 @@ exports.StandardMoves = [
     ["h", "h", "h"],
     ["h", "h", "b"],
     ["h", "b", "h"],
-    ["h", "b", "b"],
     ["b", "h", "h"],
-    ["b", "h", "b"],
-    ["b", "b", "h"],
-    ["b", "b", "b"]];
+    ["b", "h", "b"]];
