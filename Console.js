@@ -92,7 +92,7 @@ var inter = Readline.createInterface( {input: process.stdin,
     if(gameObj.IsOver())
        { 
         console.log(gameObj.GetResults());
-        process.kill();
+        process.exit();
        }
        
   }
@@ -107,7 +107,7 @@ var inter = Readline.createInterface( {input: process.stdin,
             }
       }
        console.log("deadEnd!");
-        process.kill();
+        process.exit();
   }
   
   var currentState = States[0];
