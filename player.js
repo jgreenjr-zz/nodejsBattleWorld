@@ -1,4 +1,6 @@
 
+
+
 exports.CreatePlayer = function (chatMode){
     return {
 		mode: "standbye",
@@ -6,7 +8,7 @@ exports.CreatePlayer = function (chatMode){
 		sendMessage: function(message) { this.socket.write(message) },
 		setupPlayer: function(name, socket){this.name = name; this.socket = socket;return( "user "+ this.myId + " has set name to " + this.name);},
 		chatMode: chatMode,
-		health: 10,
+		health: 20,
 		hitDamage: 2,
 		moves:[],
 		GetStatus: function(){ var stunnedMessage = this.stunned ? "STUNNED!!\n" : ""; return "----------------\nName:"+this.name+"\nHit Damamge:"+this.hitDamage+"\nHealth:"+this.health+"\n"+stunnedMessage+"----------------";},
