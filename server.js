@@ -15,19 +15,19 @@ var inter = Readline.createInterface( {input: process.stdin,
 var server = net.createServer(function(socket){
 	
 	
-		var playerObject = player.CreatePlayer(socket, chatMode);
+	var playerObject = player.CreatePlayer(chatMode);
 	
 	console.log("new Client Connected");
-	console.log(sockets.length + " Clients Connected");
+	console.log((sockets.length+1) + " Clients Connected");
 	
-	socket.write("welcome, you are among " + (sockets.length-1) + " other People");
+	socket.write("welcome, you are among " + (sockets.length) + " other People");
 	
 	socket.write("what is your name?");
 	socket.once("data", function(stream){
 	playerObject.setupPlayer(stream.toString(), socket);
 	
 	sockets.push(playerObject);
-	SendMessageToAll("You are Not alone!", playerObject);
+	SendMessageToAll("New Player Joined: " +  playerObject.name, {SendToSelf:false, selfSocket:socket,state:"standbye"});
 	
 	socket.once("data", playerObject.chatMode);
 	});
@@ -35,40 +35,35 @@ var server = net.createServer(function(socket){
 var launchingGame = false
 	
 function chatMode(stream){
-
-	
 	var playerObject = findBySocket(this);
-	var streamMessage = stream.toString() 
-	console.log(playerObject.mode );
-	if(streamMessage != "engage"){
-		playerObject.socket.once("data", playerObject.chatMode);
-		SendMessageToAll( playerObject.createMessage(streamMessage), playerObject);
-		return;
-	}
-	else if(playerObject.mode == "standbye"){
-		if(sockets.length == 1){
-			playerObject.sendMessage("Not Enough players to engage");
-			playerObject.socket.once("data", playerObject.chatMode);
-			return;
-		}
-		else if(launchingGame){
-            playerObject.sendMessage("waiting for another game to launch, please try again");
-			playerObject.socket.once("data", playerObject.chatMode);
-			return;
-		}
+    var value = stream.toString();
+    if(value == '-l'){
+       SendListOfPlayers(playerObject);
+       this.once("data", playerObject.chatMode);
+       return;
+    }
+    var oppenent = findByName(value);
+    if(!oppenent){
+        playerObject.sendMessage("Invalid Opponent");
+        SendListOfPlayers(playerObject);
+       this.once("data", playerObject.chatMode);
+       return;
+    }
+	
+	StartGame(playerObject, oppenent);
 		
-		playerObject.mode = "engage";
-	    engaged++;
-	    
-	    if(engaged == 1){
-	        playerObject.sendMessage("Waiting for another player to engage");
-			playerObject.socket.once("data", playerObject.chatMode);
-	    }
 		
-		launchingGame = true;
-		StartGame();
-		launchingGame = false;
-	}
+}
+
+function SendListOfPlayers(playerObject){
+     var message = "Available Opponents("+(sockets.length-1)+"):\n" ;
+        for(var i =0; i < sockets.length; i++){
+            
+            if(sockets[i].mode == "standbye" && sockets[i] != playerObject){
+                message += sockets[i].name +"\n";
+            }
+        }
+        playerObject.sendMessage(message);
 }
 
 function findBySocket(socket){
@@ -81,21 +76,32 @@ function findBySocket(socket){
 	}
 	return null;
 }
-
-function StartGame(){
-	for(var i =  sockets.length - 1; i - 1 > 0; i-=2)
+function findByName(name){
+	for(var i = 0; i < sockets.length; i++)
 	{
-		var g = game.CreateGame( sockets[i], sockets[i+1]);
-		sockets.pop();
-		sockets.pop();
-		games.push(g)
-		playTurn(g);
+		if (sockets[i].name == name)
+		{
+			return sockets[i];
+		}
 	}
+	return null;
 }
 
+function StartGame(player1, player2){
+        player1.mode = "ingame";
+        player2.mode = "ingame";
+		var g = game.CreateGame( player1, player2);
+    	games.push(g);
+    	console.log("Game Started: " + player1.name + " vs. " + player2.name);
+    	playTurn(g);
+	
+	}
+
+
 function playTurn(g){
-    
-    var message = g.player1.GetStatus() + "\n"+g.player2.GetStatus();
+    g.player1.socket.removeAllListeners("data");
+    g.player2.socket.removeAllListeners("data");
+    var message = g.player1.GetStatus() + "\n"+g.player2.GetStatus()+"\n";
     
     
     g.player1.sendMessage(message);
@@ -106,9 +112,9 @@ function playTurn(g){
     
     g.player2.sendMessage("Enter Move 1 of 3 (hit, block):");
     
-    g.player1.socket.once(getPlayerRole);
+    g.player1.socket.once("data", getPlayerRole);
     
-    g.player2.socket.once(getPlayerRole);
+    g.player2.socket.once("data", getPlayerRole);
 }
 
 function getPlayerRole(stream){
@@ -118,18 +124,35 @@ function getPlayerRole(stream){
     
     if(g.player.moves.length < 3){
         g.player.sendMessage("Send Next Move");
-        g.player.socket.once(getPlayerRole);
+        g.player.socket.once("data",getPlayerRole);
     }
     else if(g.otherPlayer.moves.length <3){
         g.player.sendMessage("Waiting for other player");
-        g.player.socket.once(ignoreInGame);
+        g.player.socket.once("data", ignoreInGame);
     }
     else{
-        while(g.player.moves.length >0){
-            var message = g.game.EvaluteMove();
-            g.player1.sendMessage(message);
-            g.player2.sendMessage(message);
+        var results = g.game.EvaluteAllMoves();
+        var message = "";
+         for(var i = 0; i < results.length; i++)
+            message += results[i]+"\n";
+        g.player.sendMessage(message);
+        g.otherPlayer.sendMessage(message);
+    
+        if(g.game.IsOver()){
+            console.log("Game Ended:" + g.player.name + " vs. " + g.otherPlayer.name)
+            message = g.game.GetResults()+"\nWho Do you want to play Next?";
+            g.player.sendMessage(message);
+            g.otherPlayer.sendMessage(message);
+            g.player.resetPlayer();
+            g.otherPlayer.resetPlayer();
+            games.splice(g.game);
+            g.player.socket.removeAllListeners("data");
+             g.otherPlayer.socket.removeAllListeners("data");
+            g.player.socket.once("data", g.player.chatMode);
+            g.otherPlayer.socket.once("data", g.player.chatMode);
+            return;
         }
+        
         playTurn(g.game);
     }
 }
@@ -140,7 +163,7 @@ function findGamePlayerBySocket(socket){
             return {game: games[i], player: games[i].player1, otherPlayer: games[i].player2};
         }
          if(games[i].player2.socket == socket){
-            return {game: games[i], player: games[i].player1, otherPlayer: games[i].player2};
+            return {game: games[i], player: games[i].player2, otherPlayer: games[i].player1};
         }
     }
 }
@@ -164,7 +187,7 @@ inter.on("line", function(data){
 	}
 	
 	for(var i = 0; i < sockets.length; i++){
-		SendMessageToAll(data);
+		SendMessageToAll(data, {});
 	}
 	
 }
@@ -172,7 +195,7 @@ inter.on("line", function(data){
 
 function SendMessageToAll(message, playerObject){
 for(var i = 0; i < sockets.length ; i++){
-		if( playerObject == null || sockets[i].socket != playerObject.socket)
+		if( (playerObject.SendToSelf || sockets[i].socket != playerObject.selfSocket) && (!playerObject.state || playerObject.state == sockets[i].mode))
 			sockets[i].socket.write(message);
 	}
 }
