@@ -18,9 +18,11 @@ var server = net.createServer(function(socket){
 	var playerObject = player.CreatePlayer(chatMode);
 	
 	console.log("new Client Connected");
-	console.log((sockets.length+1) + " Clients Connected");
-	
-	socket.write("welcome, you are among " + (sockets.length) + " other People");
+
+	if(sockets.length > 0)
+        socket.write("welcome, you are among " + (sockets.length) + " other People\n");
+	else
+	    socket.write("Welcome, you are the only one logged on right now.\n");
 	
 	socket.write("what is your name?");
 	socket.once("data", function(stream){
@@ -28,11 +30,11 @@ var server = net.createServer(function(socket){
 	
 	sockets.push(playerObject);
 	SendMessageToAll("New Player Joined: " +  playerObject.name, {SendToSelf:false, selfSocket:socket,state:"standbye"});
-	
+	socket.write("Who Do you Want to Play? (-l  list)");
 	socket.once("data", playerObject.chatMode);
 	});
 });
-var launchingGame = false
+
 	
 function chatMode(stream){
 	var playerObject = findBySocket(this);
@@ -42,6 +44,7 @@ function chatMode(stream){
        this.once("data", playerObject.chatMode);
        return;
     }
+    console.log(value);
     var oppenent = findByName(value);
     if(!oppenent){
         playerObject.sendMessage("Invalid Opponent");
@@ -55,15 +58,21 @@ function chatMode(stream){
 		
 }
 
-function SendListOfPlayers(playerObject){
+function SendListOfPlayers(playerObject, mode){
      var message = "Available Opponents("+(sockets.length-1)+"):\n" ;
-        for(var i =0; i < sockets.length; i++){
-            
-            if(sockets[i].mode == "standbye" && sockets[i] != playerObject){
+       message+= GetListOfPlayer(playerObject, mode);
+        playerObject.sendMessage(message);
+}
+
+function GetListOfPlayer(playerObject, mode){
+    var messsage = "";
+    for(var i =0; i < sockets.length; i++){
+            console.log(playerObject);
+            if((mode === null || sockets[i].mode == mode) && (playerObject === null || sockets[i].name != playerObject.name)){
                 message += sockets[i].name +"\n";
             }
-        }
-        playerObject.sendMessage(message);
+    }
+    return message;
 }
 
 function findBySocket(socket){
@@ -174,16 +183,14 @@ function ignoreInGame(stream){
 }
 
 	
-server.listen(process.argv[2]);
+server.listen("20509");
 var message = "";
 
 inter.on("line", function(data){
-	if(data.toString() == "end last")
+	if(data.toString() == "-l")
 	{
-		sockets[sockets.length-1].end("you are released");
-		sockets.pop();
-		count--;
-		data = "Last player was kicked out";
+	    console.log(GetListOfPlayer(null, null));
+	    return;
 	}
 	
 	for(var i = 0; i < sockets.length; i++){
