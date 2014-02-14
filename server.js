@@ -13,29 +13,50 @@ var inter = Readline.createInterface( {input: process.stdin,
   output: process.stdout});
   
 var server = net.createServer(function(socket){
-	
-	
 	var playerObject = player.CreatePlayer(chatMode);
-	
-	console.log("new Client Connected");
-
 	if(sockets.length > 0)
         socket.write("welcome, you are among " + (sockets.length) + " other People\n");
 	else
 	    socket.write("Welcome, you are the only one logged on right now.\n");
 	
 	socket.write("what is your name?");
-	socket.once("data", function(stream){
-	playerObject.setupPlayer(stream.toString(), socket);
-	
+	socket.on("end", function(stream){
+	    var toRemove = findBySocket(this);
+	    var index = sockets.indexOf(toRemove);
+	    sockets.splice(toRemove);
+	    console.log(toRemove.name + " has disconnected.");
+	})
 	sockets.push(playerObject);
-	SendMessageToAll("New Player Joined: " +  playerObject.name, {SendToSelf:false, selfSocket:socket,state:"standbye"});
-	socket.write("Who Do you Want to Play? (-l  list)");
-	socket.once("data", playerObject.chatMode);
-	});
+	socket.once("data", RegisterUser);
 });
 
+function RegisterUser (stream){
+	var playerObject = findBySocket(this);
+	var value = stream.toString();
+	for(var i =0 ; i < sockets.length(); i++)
+	{
+	    if(sockets[i].name === value)
+	        {
+	            this.write("Name already used, please try again:");
+	            this.once("data", RegisterUser);
+	            return;
+	        }
+	}
 	
+	playerObject.setupPlayer(value, this);
+    
+	
+    SendNewPlayerMessage(playerObject);
+	this.write("Who Do you Want to Play? (-l  list)");
+	this.once("data", playerObject.chatMode);
+	}
+
+function SendNewPlayerMessage(playerObject){
+    	var newPlayerMessage = "New Player Joined: " +  playerObject.name;
+    console.log(newPlayerMessage);
+	SendMessageToAll(newPlayerMessage, {SendToSelf:false, selfSocket:playerObject.socket,state:"standbye"});
+}
+
 function chatMode(stream){
 	var playerObject = findBySocket(this);
     var value = stream.toString();
@@ -46,7 +67,7 @@ function chatMode(stream){
     }
     console.log(value);
     var oppenent = findByName(value);
-    if(!oppenent){
+    if(!oppenent || oppenent.name === value){
         playerObject.sendMessage("Invalid Opponent");
         SendListOfPlayers(playerObject);
        this.once("data", playerObject.chatMode);
@@ -58,16 +79,16 @@ function chatMode(stream){
 		
 }
 
-function SendListOfPlayers(playerObject, mode){
-     var message = "Available Opponents("+(sockets.length-1)+"):\n" ;
-       message+= GetListOfPlayer(playerObject, mode);
+function SendListOfPlayers(playerObject){
+     var message = "Available Opponents:\n" ;
+       message+= GetListOfPlayer(playerObject, "standbye");
         playerObject.sendMessage(message);
 }
 
 function GetListOfPlayer(playerObject, mode){
     var messsage = "";
     for(var i =0; i < sockets.length; i++){
-            console.log(playerObject);
+            
             if((mode === null || sockets[i].mode == mode) && (playerObject === null || sockets[i].name != playerObject.name)){
                 message += sockets[i].name +"\n";
             }
@@ -181,9 +202,9 @@ function ignoreInGame(stream){
     var g = findGamePlayerBySocket(this);
         g.player.socket.once(ignoreInGame);
 }
-
 	
-server.listen("20509");
+server.listen("20509", function(){
+console.log(server.address());});
 var message = "";
 
 inter.on("line", function(data){
