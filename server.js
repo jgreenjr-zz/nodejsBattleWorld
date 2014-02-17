@@ -13,36 +13,36 @@ var inter = Readline.createInterface( {input: process.stdin,
   output: process.stdout});
   
 var server = net.createServer(function(socket){
-	var playerObject = player.CreatePlayer(chatMode);
+
 	if(sockets.length > 0)
         socket.write("welcome, you are among " + (sockets.length) + " other People\n");
 	else
 	    socket.write("Welcome, you are the only one logged on right now.\n");
-	
+
 	socket.write("what is your name?");
 	socket.on("end", function(stream){
 	    var toRemove = findBySocket(this);
 	    var index = sockets.indexOf(toRemove);
-	    sockets.splice(toRemove);
+	    sockets.splice(index,1);
 	    console.log(toRemove.name + " has disconnected.");
 	})
-	sockets.push(playerObject);
+	
 	socket.once("data", RegisterUser);
 });
 
 function RegisterUser (stream){
-	var playerObject = findBySocket(this);
+	var playerObject = player.CreatePlayer(chatMode)
 	var value = stream.toString();
-	for(var i =0 ; i < sockets.length(); i++)
+	for(var i =0 ; i < sockets.length; i++)
 	{
-	    if(sockets[i].name === value)
+	     if(sockets[i].name === value)
 	        {
 	            this.write("Name already used, please try again:");
 	            this.once("data", RegisterUser);
 	            return;
 	        }
 	}
-	
+	sockets.push(playerObject);
 	playerObject.setupPlayer(value, this);
     
 	
@@ -65,10 +65,11 @@ function chatMode(stream){
        this.once("data", playerObject.chatMode);
        return;
     }
-    console.log(value);
+    
     var oppenent = findByName(value);
-    if(!oppenent || oppenent.name === value){
-        playerObject.sendMessage("Invalid Opponent");
+   
+    if(oppenent === null || oppenent.name === playerObject.name){
+        playerObject.sendMessage("Invalid Opponent\n");
         SendListOfPlayers(playerObject);
        this.once("data", playerObject.chatMode);
        return;
@@ -90,10 +91,10 @@ function GetListOfPlayer(playerObject, mode){
     for(var i =0; i < sockets.length; i++){
             
             if((mode === null || sockets[i].mode == mode) && (playerObject === null || sockets[i].name != playerObject.name)){
-                message += sockets[i].name +"\n";
+                messsage += sockets[i].name +"\n";
             }
     }
-    return message;
+    return messsage;
 }
 
 function findBySocket(socket){
@@ -109,7 +110,7 @@ function findBySocket(socket){
 function findByName(name){
 	for(var i = 0; i < sockets.length; i++)
 	{
-		if (sockets[i].name == name)
+		if (sockets[i].name === name)
 		{
 			return sockets[i];
 		}
@@ -171,6 +172,9 @@ function getPlayerRole(stream){
         if(g.game.IsOver()){
             console.log("Game Ended:" + g.player.name + " vs. " + g.otherPlayer.name)
             message = g.game.GetResults()+"\nWho Do you want to play Next?";
+             SendMessageToAll(g.player.name + " has rejoined the list of free players", {SendToSelf:false, selfSocket:g.player.socket, state:"standbye"})
+            SendMessageToAll(g.otherPlayer.name + " has rejoined the list of free players", {SendToSelf:false, selfSocket:g.otherPlayer.socket, state:"standbye"})
+
             g.player.sendMessage(message);
             g.otherPlayer.sendMessage(message);
             g.player.resetPlayer();
@@ -180,6 +184,7 @@ function getPlayerRole(stream){
              g.otherPlayer.socket.removeAllListeners("data");
             g.player.socket.once("data", g.player.chatMode);
             g.otherPlayer.socket.once("data", g.player.chatMode);
+           
             return;
         }
         
@@ -223,7 +228,7 @@ inter.on("line", function(data){
 
 function SendMessageToAll(message, playerObject){
 for(var i = 0; i < sockets.length ; i++){
-		if( (playerObject.SendToSelf || sockets[i].socket != playerObject.selfSocket) && (!playerObject.state || playerObject.state == sockets[i].mode))
+		if( (playerObject === null || (playerObject.SendToSelf || sockets[i].socket != playerObject.selfSocket) && (!playerObject.state || playerObject.state == sockets[i].mode)))
 			sockets[i].socket.write(message);
 	}
 }
