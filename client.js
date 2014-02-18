@@ -14,7 +14,7 @@ var connection = null// net.createConnection(process.argv[2])
 //socket.connect(process.argv[2]);
 
 
-inter.write("Please enter IP:");
+console.log("Please enter IP:");
 
 inter.once("line", function(data){
     connection = createClientConnection(data.toString()); 
@@ -31,7 +31,8 @@ inter.once("line", function(data){
 function createClientConnection(ip){
     
     var returnValue =null;
-    if(ip === ""){
+    if(ip != ""){
+		console.log("Connecting to external Server: "+ip);
         returnValue = net.createConnection(20509, ip)
     }
     else
