@@ -2,7 +2,7 @@
 
 var net = require("net");
 var Readline = require("readline");
-
+var clientConfiguration = require("./ClientConfiguration.js");
 var inter = Readline.createInterface( {input: process.stdin,
   output: process.stdout});
   
@@ -31,14 +31,10 @@ inter.once("line", function(data){
 function createClientConnection(ip){
     
     var returnValue =null;
-    if(ip != ""){
-		console.log("Connecting to external Server: "+ip);
-        returnValue = net.createConnection(20509, ip)
-    }
-    else
-    {
-        returnValue = net.createConnection(20509)
-    }
+    ip = clientConfiguration.CalculateIP(ip);
+	console.log("Connecting to external Server: "+ip);
+    returnValue = net.createConnection(20509, ip)
+    
     returnValue.on("data", function(stream){
 	    console.log(stream.toString());
     });
