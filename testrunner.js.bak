@@ -2,10 +2,9 @@ exports.results = {ran: 0, passed: 0, failed: 0, asserts:0};
 exports.PassOff = false;
 
 exports.Test = function (text, test){
-      exports.results.ran++;   
-     try{
+     
      var result = test();
-    
+      exports.results.ran++;  
     if(result === undefined || result.passed)
     {
         if(!exports.PassOff)
@@ -17,11 +16,6 @@ exports.Test = function (text, test){
         exports.results.failed++;
         console.log(text+"-Result: Failed: " + result.message);
     }
-  }catch(exception){
-  	 exports.results.failed++;
-        console.log(text+"-Result: Failed: " + exception.message);
-	}
-
 }
 
 exports.createPass = function() { return {passed: true};}
