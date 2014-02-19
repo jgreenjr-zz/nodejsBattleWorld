@@ -5,40 +5,29 @@ var Readline = require("readline");
 var clientConfiguration = require("./ClientConfiguration.js");
 var inter = Readline.createInterface( {input: process.stdin,
   output: process.stdout});
-  
-var connection = null// net.createConnection(process.argv[2]) 
 
-
-
-
-//socket.connect(process.argv[2]);
-
+var connection = null;
 
 console.log("Please enter IP:");
+inter.once("line", ConnectPlayer);
 
-inter.once("line", function(data){
-    connection = createClientConnection(data.toString()); 
-    inter.on("line", function(data){
-       
-        if(data.toString() == "goodbye"){
+var connection_methods = 
+{
+   connection_data: function (stream){console.log(stream.toString());},
+   connection_end: function(){ inter.close();}
+};
+
+function interface_line(data){
+   if(data.toString() == "goodbye"){
             connection.end("I'm out of here");
             inter.close();
         }
-        connection.write(data);
-    });
-});
+    connection.write(data);
+}
 
-function createClientConnection(ip){
-    
-    var returnValue =null;
-    ip = clientConfiguration.CalculateIP(ip);
-	console.log("Connecting to external Server: "+ip);
-    returnValue = net.createConnection(20509, ip)
-    
-    returnValue.on("data", function(stream){
-	    console.log(stream.toString());
-    });
-
-    returnValue.on("end", function(){ inter.close();});
-    return returnValue;
+function ConnectPlayer(data){
+    var ip = clientConfiguration.CalculateIP(data.toString());
+    console.log("Connecting to IP: "+ ip);
+    connection = clientConfiguration.createClientConnection(ip, net, connection_methods); 
+    inter.on("line", interface_line);
 }
