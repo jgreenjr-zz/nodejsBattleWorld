@@ -1,4 +1,4 @@
-exports.results = {ran: 0, passed: 0, failed: 0};
+exports.results = {ran: 0, passed: 0, failed: 0, asserts:0};
 exports.PassOff = false;
 
 exports.Test = function (text, test){
@@ -24,7 +24,7 @@ exports.createPass = function() { return {passed: true};}
 exports.createResult = function(message) {return {passed: false, message: message}; }
     
 exports.Assert = {
-    IsTrue: function (statement, message){ if(statement) return exports.createPass(); return exports.createResult(message);},
+    IsTrue: function (statement, message){exports.results.asserts++; if(statement) return exports.createPass(); return exports.createResult(message);},
     And: function (results){
         
         for(var i = 0; i < results.length; i++){
@@ -34,7 +34,7 @@ exports.Assert = {
         return exports.createPass();
     },
     IsEqual: function(expected, actual){
-        
+        exports.results.asserts++;
         if(expected!=actual)
         {
             return exports.createResult("expected: "+expected + "\nActual:" + actual);

@@ -1,5 +1,5 @@
 var testrunner = require("./testrunner.js");
-
+testrunner.PassOff = true;
 var clientConfiguration = require("./ClientConfiguration.js")
 
 var net = require("./mock/Net.js");
