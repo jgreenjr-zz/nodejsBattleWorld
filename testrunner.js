@@ -1,32 +1,22 @@
-var tests = [];
+exports.results = {ran: 0, passed: 0, failed: 0};
 exports.PassOff = false;
-exports.AddTest = function(text, test)
-{
-    tests.push({text: text, test: test});
-}
-
-exports.RunTests = function(){
-    
-    for(var i = 0; i < tests.length; i++){
-        console.log("Running "+ tests[i].text)
-        var result = tests[i].test()
-        if(result.passed)
-            console.log("Result: Passed");
-        else
-            console.log("Result: Failed: " + result.message);
-    }
-    
-}
 
 exports.Test = function (text, test){
      
      var result = test();
-        
+      exports.results.ran++;  
      
-     if(result.passed && !exports.PassOff)
+    if(result.passed)
+    {
+        if(!exports.PassOff)
             console.log(text+"-Result: Passed");
-        else if(!result.passed)
-            console.log(text+"-Result: Failed: " + result.message);
+        exports.results.passed++;
+    }
+    else if(!result.passed)
+    {
+        exports.results.failed++;
+        console.log(text+"-Result: Failed: " + result.message);
+    }
 }
 
 exports.createPass = function() { return {passed: true};}
@@ -52,3 +42,10 @@ exports.Assert = {
         return {passed:true};
     }
 };
+
+exports.IsTestFile = function (fileName){
+    var length = fileName.length - 8;
+    if(length < 0)
+        return false;
+    return (fileName.substr(length) == "tests.js")
+}

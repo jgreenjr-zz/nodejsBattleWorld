@@ -31,7 +31,7 @@ function HitHitHurtsBothWithHalfHitDamage(){
     
     g.EvaluteMove();
     
-    return testrunner.Assert.And([testrunner.Assert.IsTrue(player1.health==9, "player 1 damage not calculated Correctly"), testrunner.Assert.IsTrue(player2.health==9, "player 2 damage not calculated Correctly")]);
+    return testrunner.Assert.And([testrunner.Assert.IsTrue(player1.health==19, "player 1 damage not calculated Correctly"), testrunner.Assert.IsTrue(player2.health==19, "player 2 damage not calculated Correctly")]);
 }
 
 function GetMoveCallShouldRemoveMoveFromMovesList(){
@@ -75,7 +75,7 @@ function hittingStunnedPlayerShouldResultInFullDamage(){
   
   g.EvaluteMove();
   
-  return testrunner.Assert.IsEqual(player2.health,8);
+  return testrunner.Assert.IsEqual(player2.health,18);
     
 }
 

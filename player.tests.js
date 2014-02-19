@@ -26,7 +26,7 @@ testrunner.Test("Take Damage", function(){
     
     p.TakeDamage(1);
     
-    return testrunner.Assert.IsEqual(9, p.health);
+    return testrunner.Assert.IsEqual(19, p.health);
 })
 
 testrunner.Test("Take too much Damage", function(){

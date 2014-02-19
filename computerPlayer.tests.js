@@ -4,11 +4,11 @@ var computerPlayerCreator = require("./computerPlayer.js");
 testrunner.PassOff = true;
 
 testrunner.Test("Should call Non-stunned pattern", function(){
-    computerPlayerCreator.StandardMoves = [["this", "is", "normal"]];
+    computerPlayerCreator.StandardMoves = [["normal"]];
     var compPlayer = computerPlayerCreator.CreateComputerPlayer()
     var moves = compPlayer.GetMoves({stunned: false})
     
-    return testrunner.Assert.IsEqual(moves, computerPlayerCreator.StandardMoves[0]);
+    return testrunner.Assert.IsEqual(moves[0], computerPlayerCreator.StandardMoves[0][0]);
 });
 
 testrunner.Test("Should note Non-humanPlayer", function(){
@@ -20,11 +20,11 @@ testrunner.Test("Should note Non-humanPlayer", function(){
 
 
 testrunner.Test("Should call stunned pattern", function(){
-    computerPlayerCreator.StandardMoves = [["this", "is", "normal"]];
+    computerPlayerCreator.StandardMoves = [["normal"]];
     
-    computerPlayerCreator.StunnedMoves = [["this", "is", "stunned"]];
+    computerPlayerCreator.StunnedMoves = [["stunned"]];
     var compPlayer = computerPlayerCreator.CreateComputerPlayer()
     var moves = compPlayer.GetMoves({stunned: true})
     
-    return testrunner.Assert.IsEqual(moves, computerPlayerCreator.StunnedMoves[0]);
+    return testrunner.Assert.IsEqual(moves[0], computerPlayerCreator.StunnedMoves[0][0]);
 });
