@@ -47,7 +47,7 @@ function SocketManagerObject(events){
 		
 		var returnList = [];
 		for(var i = 0; i < players.length; i++){
-			if(args.Not.indexOf(players[i].name) == -1 && (args.Mode == null || players[i].mode == args.Mode ))
+			if(args.Not.indexOf(players[i].name) == -1)
 			returnList.push(players[i].name);
 		}
 		return returnList;

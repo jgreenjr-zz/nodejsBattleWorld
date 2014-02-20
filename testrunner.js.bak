@@ -45,18 +45,6 @@ exports.Assert = {
             return exports.createResult("expected: "+expected + "\nActual:" + actual);
         }
         return {passed:true};
-    },
-    IsEqualArray: function(expected, actual){
-    	if(expected.length != actual.length)
-    	{
-    		 return exports.createResult("expected: "+expected + "\nActual:" + actual);
-    	}
-    	for(var i = 0; i < expected.length; i ++){
-    		if(expected[i] != actual[i]){
-    			 return exports.createResult("expected: "+expected + "\nActual:" + actual);
-    		}
-    	}
-    	return exports.createPass();
     }
 };
 

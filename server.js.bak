@@ -52,8 +52,8 @@ function RegisterUser (stream){
 	}
 
 function SendNewPlayerMessage(playerObject){
-  var newPlayerMessage = "New Player Joined: " +  playerObject.name;
-  console.log(newPlayerMessage);
+    	var newPlayerMessage = "New Player Joined: " +  playerObject.name;
+    console.log(newPlayerMessage);
 	SendMessageToAll(newPlayerMessage, {SendToSelf:false, selfSocket:playerObject.socket,state:"standbye"});
 }
 
