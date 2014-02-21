@@ -1,11 +1,11 @@
 var testrunner = require("./testrunner.js");
 var playerFactory = require("./player.js");
 var socket = require("./mock/Socket.js");
-var socketManager = require("./SocketManager.js");
+var PlayerManager = require("./PlayerManager.js");
 testrunner.PassOff = true;
 
 testrunner.Test("Should allow you to add a new player to the manager", function(){
-	var sm = socketManager.CreateManager({});
+	var sm = PlayerManager.CreateManager({});
 	var player = playerFactory.CreatePlayer(null);
 	
 	sm.Add(player);
@@ -15,7 +15,7 @@ testrunner.Test("Should allow you to add a new player to the manager", function(
 	
 	
 	testrunner.Test("Should be able to find player by socket", function(){
-	var sm = socketManager.CreateManager({});
+	var sm = PlayerManager.CreateManager({});
 	var s =  socket.CreateSocket();
 	var player = playerFactory.CreatePlayer(null);
 	player.socket = s
@@ -29,7 +29,7 @@ testrunner.Test("Should allow you to add a new player to the manager", function(
 	
 	
 testrunner.Test("Should be able to find player by name", function(){
-	var sm = socketManager.CreateManager({});
+	var sm = PlayerManager.CreateManager({});
 	var player = playerFactory.CreatePlayer(null);
 	player.name = "jay"
 	sm.Add(player);
@@ -42,7 +42,7 @@ testrunner.Test("Should be able to find player by name", function(){
 	
 	
 testrunner.Test("Should allow you to remove an existing player by name the manager", function(){
-	var sm = socketManager.CreateManager({});
+	var sm = PlayerManager.CreateManager({});
 	var player = playerFactory.CreatePlayer(null);
 	player.name="jay";
 	sm.Add(player);
@@ -53,7 +53,7 @@ testrunner.Test("Should allow you to remove an existing player by name the manag
 testrunner.Test("Should AddDefaultActions to socket", function(){
 	var endEvent = function(){/*end*/ };
 	
-	var sm = socketManager.CreateManager({socket_end:endEvent});
+	var sm = PlayerManager.CreateManager({socket_end:endEvent});
 	var s =  socket.CreateSocket();
 	var player = playerFactory.CreatePlayer(null);
 	player.socket = s
@@ -67,7 +67,7 @@ testrunner.Test("Should AddDefaultActions to socket", function(){
 });
 
 testrunner.Test("Should Warn of used name", function(){
-	var sm = socketManager.CreateManager({});
+	var sm = PlayerManager.CreateManager({});
 	var player = playerFactory.CreatePlayer(null);
 	player.name="jay";
 	sm.Add(player);
@@ -80,7 +80,7 @@ testrunner.Test("Should Warn of used name", function(){
 });
 
 testrunner.Test("Should send a message to all users ",  function(){
-	var sm = socketManager.CreateManager({});
+	var sm = PlayerManager.CreateManager({});
 	var player1 = playerFactory.CreatePlayer(null);
 	
 	var player1Message = "";
@@ -105,7 +105,7 @@ testrunner.Test("Should send a message to all users ",  function(){
 });
 
 testrunner.Test("Should send a message to all users but player1",  function(){
-	var sm = socketManager.CreateManager({});
+	var sm = PlayerManager.CreateManager({});
 	var player1 = playerFactory.CreatePlayer(null);
 	
 	var player1Message = "";
@@ -130,7 +130,7 @@ testrunner.Test("Should send a message to all users but player1",  function(){
 });
 
 testrunner.Test("Should send a message to all users in x",  function(){
-	var sm = socketManager.CreateManager({});
+	var sm = PlayerManager.CreateManager({});
 	var player1 = playerFactory.CreatePlayer(null);
 	
 	var player1Message = "";
@@ -155,7 +155,7 @@ testrunner.Test("Should send a message to all users in x",  function(){
 });
 
 testrunner.Test("Should get a list of all users",  function(){
-	var sm = socketManager.CreateManager({});
+	var sm = PlayerManager.CreateManager({});
 	var player1 = playerFactory.CreatePlayer(null);
 	var player2 = playerFactory.CreatePlayer(null);
 	player1.name="jay";
@@ -169,7 +169,7 @@ testrunner.Test("Should get a list of all users",  function(){
 });
 
 testrunner.Test("Should get a list of all users but specified",  function(){
-	var sm = socketManager.CreateManager({});
+	var sm = PlayerManager.CreateManager({});
 	var player1 = playerFactory.CreatePlayer(null);
 	var player2 = playerFactory.CreatePlayer(null);
 	player1.name="jay";
@@ -183,7 +183,7 @@ testrunner.Test("Should get a list of all users but specified",  function(){
 });
 
 testrunner.Test("Should get a list of all users in mode specified",  function(){
-	var sm = socketManager.CreateManager({});
+	var sm = PlayerManager.CreateManager({});
 	var player1 = playerFactory.CreatePlayer(null);
 	var player2 = playerFactory.CreatePlayer(null);
 	player1.name="jay";
