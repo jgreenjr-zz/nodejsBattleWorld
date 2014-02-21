@@ -16,28 +16,33 @@ var gameObject = function(player1, player2){
     this.EvaluteMove = function(){
         var player1Move = this.GetNextMove(player1) ;
         var player2Move = this.GetNextMove(player2) ;
+        var moveText = "[" + player1Move + ", " + player2Move + "]";
+        var message = "";
         if(player1Move == this.Hit && player2Move == this.Hit){
             this.player1.TakeDamage( this.player2.hitDamage * 0.5);
             this.player2.TakeDamage( this.player1.hitDamage * 0.5);
-            return "Both Players hit, half damage delivered to both";
+            message = "Both Players hit, half damage delivered to both";
         }
         else if(player1Move == this.Hit && player2Move == this.Block){
            this.player1.stunned = true;
-            return this.player1.name + " has been stunned";
+            message = this.player1.name + " has been stunned";
         }
         else if(player1Move == this.Block && player2Move == this.Hit){
             this.player2.stunned= true;
-            return this.player2.name + " has been stunned";
+            message = this.player2.name + " has been stunned";
         }
         else if(player1Move == this.Stunned && player2Move == this.Hit){
             this.player1.TakeDamage( this.player2.hitDamage);
-            return this.player1.name + " has taken damage";
+            message = this.player1.name + " has taken damage";
         }
         else if(player2Move == this.Stunned && player1Move == this.Hit){
             this.player2.TakeDamage( this.player1.hitDamage );
-            return this.player2.name + " has taken damage";
+            message = this.player2.name + " has taken damage";
         }
-        return "Neither action result in change of state";
+        else{
+            message = "Neither action result in change of state"
+        }
+        return message + moveText; 
     };
     
     this.GetNextMove = function (playerObj){
@@ -63,6 +68,8 @@ var gameObject = function(player1, player2){
         while (player1.moves.length > 0 && !this.IsOver()) {
             results.push(this.EvaluteMove());
         }
+        player1.moves = [];
+        player2.moves = [];
         return results;
     }
     this.GetResults = function(){

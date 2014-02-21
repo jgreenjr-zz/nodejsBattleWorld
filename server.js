@@ -19,7 +19,7 @@ var server = net.createServer(function(socket){
 	else
 	    socket.write("Welcome, you are the only one logged on right now.\n");
 
-	socket.write("what is your name?");
+	socket.write("what is your name?\n");
 	socket.on("end", function(stream){
 	    var toRemove = findBySocket(this);
 	    var index = sockets.indexOf(toRemove);
@@ -47,12 +47,12 @@ function RegisterUser (stream){
     
 	
     SendNewPlayerMessage(playerObject);
-	this.write("Who Do you Want to Play? (-l  list)");
+	this.write("Who Do you Want to Play? (-l  list)\n");
 	this.once("data", playerObject.chatMode);
 	}
 
 function SendNewPlayerMessage(playerObject){
-  var newPlayerMessage = "New Player Joined: " +  playerObject.name;
+  var newPlayerMessage = "New Player Joined: " +  playerObject.name+"\n";
   console.log(newPlayerMessage);
 	SendMessageToAll(newPlayerMessage, {SendToSelf:false, selfSocket:playerObject.socket,state:"standbye"});
 }
@@ -139,9 +139,9 @@ function playTurn(g){
     
     g.player2.sendMessage(message);
     
-    g.player1.sendMessage("Enter Move 1 of 3 (hit, block):");
+    g.player1.sendMessage("Enter Move 1 of 3 (hit, block):\n");
     
-    g.player2.sendMessage("Enter Move 1 of 3 (hit, block):");
+    g.player2.sendMessage("Enter Move 1 of 3 (hit, block):\n");
     
     g.player1.socket.once("data", getPlayerRole);
     
@@ -150,15 +150,16 @@ function playTurn(g){
 
 function getPlayerRole(stream){
     var g = findGamePlayerBySocket(this);
-    
+    if(g === undefined)
+        console.log(games.length)
     g.player.moves.push(stream);
     
     if(g.player.moves.length < 3){
-        g.player.sendMessage("Send Next Move");
+        g.player.sendMessage("Send Next Move\n");
         g.player.socket.once("data",getPlayerRole);
     }
     else if(g.otherPlayer.moves.length <3){
-        g.player.sendMessage("Waiting for other player");
+        g.player.sendMessage("Waiting for other player\n");
         g.player.socket.once("data", ignoreInGame);
     }
     else{
@@ -170,18 +171,19 @@ function getPlayerRole(stream){
         g.otherPlayer.sendMessage(message);
     
         if(g.game.IsOver()){
-            console.log("Game Ended:" + g.player.name + " vs. " + g.otherPlayer.name)
-            message = g.game.GetResults()+"\nWho Do you want to play Next?";
-             SendMessageToAll(g.player.name + " has rejoined the list of free players", {SendToSelf:false, selfSocket:g.player.socket, state:"standbye"})
-            SendMessageToAll(g.otherPlayer.name + " has rejoined the list of free players", {SendToSelf:false, selfSocket:g.otherPlayer.socket, state:"standbye"})
+            console.log("Game Ended:" + g.game.GetResults());
+            message = g.game.GetResults()+"\nWho Do you want to play Next?\n";
+             SendMessageToAll(g.player.name + " has rejoined the list of free players\n", {SendToSelf:false, selfSocket:g.player.socket, state:"standbye"})
+            SendMessageToAll(g.otherPlayer.name + " has rejoined the list of free players\n", {SendToSelf:false, selfSocket:g.otherPlayer.socket, state:"standbye"})
 
             g.player.sendMessage(message);
             g.otherPlayer.sendMessage(message);
             g.player.resetPlayer();
             g.otherPlayer.resetPlayer();
-            games.splice(g.game);
+            var gameindex = games.indexOf(g.game);
+            games.splice(gameindex, 1);
             g.player.socket.removeAllListeners("data");
-             g.otherPlayer.socket.removeAllListeners("data");
+            g.otherPlayer.socket.removeAllListeners("data");
             g.player.socket.once("data", g.player.chatMode);
             g.otherPlayer.socket.once("data", g.player.chatMode);
            
@@ -205,7 +207,7 @@ function findGamePlayerBySocket(socket){
 
 function ignoreInGame(stream){
     var g = findGamePlayerBySocket(this);
-        g.player.socket.once(ignoreInGame);
+        g.player.socket.once("data", ignoreInGame);
 }
 	
 server.listen("20509", function(){
