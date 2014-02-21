@@ -36,3 +36,17 @@ testrunner.Test("Take too much Damage", function(){
     
     return testrunner.Assert.IsEqual(0, p.health);
 })
+
+testrunner.Test("Reseting should set player back to normal",function(){
+    var p = player.CreatePlayer();
+    
+    p.TakeDamage(200);
+    p.mode = "unknown";
+    
+    p.resetPlayer();
+    
+    return testrunner.Assert.And([
+        testrunner.Assert.IsEqual(player.PlayerModes.StandBy,p.mode),
+        testrunner.Assert.IsEqual(20, p.health)]);
+    
+})

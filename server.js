@@ -54,7 +54,7 @@ function RegisterUser (stream){
 function SendNewPlayerMessage(playerObject){
   var newPlayerMessage = "New Player Joined: " +  playerObject.name+"\n";
   console.log(newPlayerMessage);
-	SendMessageToAll(newPlayerMessage, {SendToSelf:false, selfSocket:playerObject.socket,state:"standbye"});
+	SendMessageToAll(newPlayerMessage, {SendToSelf:false, selfSocket:playerObject.socket,state:player.PlayerModes.StandBy});
 }
 
 function chatMode(stream){
@@ -82,7 +82,7 @@ function chatMode(stream){
 
 function SendListOfPlayers(playerObject){
      var message = "Available Opponents:\n" ;
-       message+= GetListOfPlayer(playerObject, "standbye");
+       message+= GetListOfPlayer(playerObject, player.PlayerModes.StandBy);
         playerObject.sendMessage(message);
 }
 
@@ -119,8 +119,8 @@ function findByName(name){
 }
 
 function StartGame(player1, player2){
-        player1.mode = "ingame";
-        player2.mode = "ingame";
+        player1.mode = player.PlayerModes.InGame;
+        player2.mode = player.PlayerModes.InGame;
 		var g = game.CreateGame( player1, player2);
     	games.push(g);
     	console.log("Game Started: " + player1.name + " vs. " + player2.name);
@@ -173,8 +173,8 @@ function getPlayerRole(stream){
         if(g.game.IsOver()){
             console.log("Game Ended:" + g.game.GetResults());
             message = g.game.GetResults()+"\nWho Do you want to play Next?\n";
-             SendMessageToAll(g.player.name + " has rejoined the list of free players\n", {SendToSelf:false, selfSocket:g.player.socket, state:"standbye"})
-            SendMessageToAll(g.otherPlayer.name + " has rejoined the list of free players\n", {SendToSelf:false, selfSocket:g.otherPlayer.socket, state:"standbye"})
+             SendMessageToAll(g.player.name + " has rejoined the list of free players\n", {SendToSelf:false, selfSocket:g.player.socket, state:player.PlayerModes.StandBy})
+            SendMessageToAll(g.otherPlayer.name + " has rejoined the list of free players\n", {SendToSelf:false, selfSocket:g.otherPlayer.socket, state:player.PlayerModes.StandBy})
 
             g.player.sendMessage(message);
             g.otherPlayer.sendMessage(message);

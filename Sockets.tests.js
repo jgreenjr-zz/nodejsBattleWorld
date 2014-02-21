@@ -140,11 +140,11 @@ testrunner.Test("Should send a message to all users in x",  function(){
 	
 	var player2 = playerFactory.CreatePlayer(null);
 	player2.SendMessage = function(message){ player2Message = message;};
-	player2.mode = "InGame";
+	player2.mode = playerFactory.PlayerModes.InGame;
 	sm.Add(player1);
 	sm.Add(player2);
 		
-	sm.SendMessage("THIS IS MY MESSAGE", {Mode:"standbye"});
+	sm.SendMessage("THIS IS MY MESSAGE", {Mode:playerFactory.PlayerModes.StandBy});
 	
 	var asserts = [];
 	
@@ -188,11 +188,11 @@ testrunner.Test("Should get a list of all users in mode specified",  function(){
 	var player2 = playerFactory.CreatePlayer(null);
 	player1.name="jay";
 	player2.name="brandon";
-	player2.mode = "InGame";
+	player2.mode = playerFactory.PlayerModes.InGame;
 	sm.Add(player1);
 	sm.Add(player2);
 		
-	var list = sm.GetListOfPlayers({Mode: "standbye"});
+	var list = sm.GetListOfPlayers({Mode: playerFactory.PlayerModes.StandBy});
 		
 	return testrunner.Assert.IsEqualArray(["jay"],list);
 });
