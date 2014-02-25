@@ -1,4 +1,7 @@
 exports.CreateGame = function(player1, player2){
+    player1.SetInGame();
+    player2.SetInGame();
+    
     return new gameObject(player1, player2);
     
     
