@@ -2,19 +2,17 @@
 
 var net = require("net");
 var Readline = require("readline");
-var game = require("./game.js");
-var player = require("./player.js")
-var engaged = 0;
+var gameFactory = require("./game.js");
+var playerFactory = require("./player.js")
+var playerManagerFactory = require("./PlayerManager.js");
+var gameManager = require("./GameManager.js");
 
-var games = [];
-
-var sockets = [];
 var inter = Readline.createInterface( {input: process.stdin,
   output: process.stdout});
-  
+var playerManager = playerManagerFactory.CreateManager()  
 var server = net.createServer(function(socket){
-
-	if(sockets.length > 0)
+    
+	if(playerManager.length() > 0)
         socket.write("welcome, you are among " + (sockets.length) + " other People\n");
 	else
 	    socket.write("Welcome, you are the only one logged on right now.\n");
@@ -31,6 +29,7 @@ var server = net.createServer(function(socket){
 });
 
 function RegisterUser (stream){
+    var playerManager
 	var playerObject = player.CreatePlayer(chatMode)
 	var value = stream.toString();
 	for(var i =0 ; i < sockets.length; i++)
@@ -210,7 +209,7 @@ function ignoreInGame(stream){
         g.player.socket.once("data", ignoreInGame);
 }
 	
-server.listen("20509", function(){
+server.listen(process.env.PORT, function(){
 console.log(server.address());});
 var message = "";
 

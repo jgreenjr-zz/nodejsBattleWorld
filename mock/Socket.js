@@ -6,7 +6,7 @@ function socket (){
 	this.events = [];
 	this.eventTitle = [];
 	
-	this.on = function (type, event){
+	this.once = function (type, event){
     this.events.push(event);
     this.eventTitle.push(type);
 	};

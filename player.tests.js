@@ -8,7 +8,7 @@ testrunner.Test("GetStatus", function(){
     
     var message = p.GetStatus();
     
-    return testrunner.Assert.IsEqual("----------------\nName:"+p.name+"\nHit Damamge:"+p.hitDamage+"\nHealth:"+p.health+"\n----------------",
+    testrunner.Assert.IsEqual("----------------\nName:"+p.name+"\nHit Damamge:"+p.hitDamage+"\nHealth:"+p.health+"\n----------------",
         message);
 });
 
@@ -17,7 +17,7 @@ testrunner.Test("GetStunnedStatus", function(){
     p.stunned = true;
     var message = p.GetStatus();
     
-    return testrunner.Assert.IsEqual("----------------\nName:"+p.name+"\nHit Damamge:"+p.hitDamage+"\nHealth:"+p.health+"\nSTUNNED!!\n----------------",
+    testrunner.Assert.IsEqual("----------------\nName:"+p.name+"\nHit Damamge:"+p.hitDamage+"\nHealth:"+p.health+"\nSTUNNED!!\n----------------",
         message);
 });
 
@@ -26,7 +26,7 @@ testrunner.Test("Take Damage", function(){
     
     p.TakeDamage(1);
     
-    return testrunner.Assert.IsEqual(19, p.health);
+    testrunner.Assert.IsEqual(19, p.health);
 })
 
 testrunner.Test("Take too much Damage", function(){
@@ -34,7 +34,7 @@ testrunner.Test("Take too much Damage", function(){
     
     p.TakeDamage(200);
     
-    return testrunner.Assert.IsEqual(0, p.health);
+    testrunner.Assert.IsEqual(0, p.health);
 })
 
 testrunner.Test("Reseting should set player back to normal",function(){
@@ -45,8 +45,7 @@ testrunner.Test("Reseting should set player back to normal",function(){
     
     p.resetPlayer();
     
-    return testrunner.Assert.And([
-        testrunner.Assert.IsEqual(player.PlayerModes.StandBy,p.mode),
-        testrunner.Assert.IsEqual(20, p.health)]);
+    testrunner.Assert.IsEqual(player.PlayerModes.StandBy,p.mode);
+    testrunner.Assert.IsEqual(20, p.health);
     
 })

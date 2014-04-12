@@ -9,7 +9,7 @@ function PlayerManagerObject(events){
 	this.Add = function (player){
 		if(player.socket)
 		{
-			player.socket.on("end", events.socket_end);
+			player.socket.once("end", events.socket_end);
 		}
 		players.push(player);
 	};

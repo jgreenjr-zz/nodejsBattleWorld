@@ -9,8 +9,7 @@ testrunner.Test("Should allow you to add a new player to the manager", function(
 	var player = playerFactory.CreatePlayer(null);
 	
 	sm.Add(player);
-	
-	return testrunner.Assert.IsEqual(1, sm.length());
+	testrunner.Assert.IsEqual(1, sm.length());
 	});
 	
 	
@@ -21,10 +20,9 @@ testrunner.Test("Should allow you to add a new player to the manager", function(
 	player.socket = s
 	sm.Add(player);
 
-	
 	var p = sm.FindBySocket(s);
 	
-	return testrunner.Assert.IsEqual(player, p);
+	testrunner.Assert.IsEqual(player, p);
 	});
 	
 	
@@ -34,10 +32,9 @@ testrunner.Test("Should be able to find player by name", function(){
 	player.name = "jay"
 	sm.Add(player);
 
-	
 	var p = sm.FindByName("jay");
 	
-	return testrunner.Assert.IsEqual(player, p);
+	testrunner.Assert.IsEqual(player, p);
 });
 	
 	
@@ -47,7 +44,7 @@ testrunner.Test("Should allow you to remove an existing player by name the manag
 	player.name="jay";
 	sm.Add(player);
 	sm.Remove("jay");
-	return testrunner.Assert.IsEqual(0, sm.length());
+	testrunner.Assert.IsEqual(0, sm.length());
 });
 
 testrunner.Test("Should AddDefaultActions to socket", function(){
@@ -59,11 +56,8 @@ testrunner.Test("Should AddDefaultActions to socket", function(){
 	player.socket = s
 	sm.Add(player);
 	
-	var asserts = [];
-	asserts.push(testrunner.Assert.IsEqual(1, s.events.length));
-	asserts.push(testrunner.Assert.IsEqual(endEvent, s.getEvent("end")));
-	
-	return testrunner.Assert.And(asserts);
+	testrunner.Assert.IsEqual(1, s.events.length);
+	testrunner.Assert.IsEqual(endEvent, s.getEvent("end"));
 });
 
 testrunner.Test("Should Warn of used name", function(){
@@ -72,11 +66,8 @@ testrunner.Test("Should Warn of used name", function(){
 	player.name="jay";
 	sm.Add(player);
 		
-	var asserts = [];
-	asserts.push(testrunner.Assert.IsEqual(true, sm.IsUsedName("jay")));
-	asserts.push(testrunner.Assert.IsEqual(false, sm.IsUsedName("dave")));
-	
-	return testrunner.Assert.And(asserts)
+	testrunner.Assert.IsEqual(true, sm.IsUsedName("jay"));
+	testrunner.Assert.IsEqual(false, sm.IsUsedName("dave"));
 });
 
 testrunner.Test("Should send a message to all users ",  function(){
@@ -96,12 +87,8 @@ testrunner.Test("Should send a message to all users ",  function(){
 		
 	sm.SendMessage("THIS IS MY MESSAGE");
 	
-	var asserts = [];
-	
-	asserts.push(testrunner.Assert.IsEqual("THIS IS MY MESSAGE", player1Message));
-	asserts.push(testrunner.Assert.IsEqual("THIS IS MY MESSAGE", player2Message));
-		
-	return testrunner.Assert.And(asserts)
+	testrunner.Assert.IsEqual("THIS IS MY MESSAGE", player1Message);
+	testrunner.Assert.IsEqual("THIS IS MY MESSAGE", player2Message);
 });
 
 testrunner.Test("Should send a message to all users but player1",  function(){
@@ -123,10 +110,8 @@ testrunner.Test("Should send a message to all users but player1",  function(){
 	
 	var asserts = [];
 	
-	asserts.push(testrunner.Assert.IsEqual("", player1Message));
-	asserts.push(testrunner.Assert.IsEqual("THIS IS MY MESSAGE", player2Message));
-		
-	return testrunner.Assert.And(asserts)
+	testrunner.Assert.IsEqual("", player1Message);
+	testrunner.Assert.IsEqual("THIS IS MY MESSAGE", player2Message)
 });
 
 testrunner.Test("Should send a message to all users in x",  function(){
@@ -148,10 +133,10 @@ testrunner.Test("Should send a message to all users in x",  function(){
 	
 	var asserts = [];
 	
-	asserts.push(testrunner.Assert.IsEqual("THIS IS MY MESSAGE", player1Message));
-	asserts.push(testrunner.Assert.IsEqual("", player2Message));
+    testrunner.Assert.IsEqual("THIS IS MY MESSAGE", player1Message);
+	testrunner.Assert.IsEqual("", player2Message);
 		
-	return testrunner.Assert.And(asserts)
+	
 });
 
 testrunner.Test("Should get a list of all users",  function(){
@@ -165,7 +150,7 @@ testrunner.Test("Should get a list of all users",  function(){
 		
 	var list = sm.GetListOfPlayers()
 		
-	return testrunner.Assert.IsEqualArray(list, ["jay", "brandon"]);
+	testrunner.Assert.IsEqualArray(list, ["jay", "brandon"]);
 });
 
 testrunner.Test("Should get a list of all users but specified",  function(){
@@ -179,7 +164,7 @@ testrunner.Test("Should get a list of all users but specified",  function(){
 		
 	var list = sm.GetListOfPlayers({Not: "jay"});
 		
-	return testrunner.Assert.IsEqualArray(["brandon"],list);
+	testrunner.Assert.IsEqualArray(["brandon"],list);
 });
 
 testrunner.Test("Should get a list of all users in mode specified",  function(){
@@ -194,5 +179,5 @@ testrunner.Test("Should get a list of all users in mode specified",  function(){
 		
 	var list = sm.GetListOfPlayers({Mode: playerFactory.PlayerModes.StandBy});
 		
-	return testrunner.Assert.IsEqualArray(["jay"],list);
+	testrunner.Assert.IsEqualArray(["jay"],list);
 });

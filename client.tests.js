@@ -9,10 +9,8 @@ testrunner.Test("Should use right configuration Setting",function(){
     
     var remoteConnection = clientConfiguration.CalculateIP("IP");
     
-    return testrunner.Assert.And(
-        [testrunner.Assert.IsEqual("0.0.0.0", localIP),
-         testrunner.Assert.IsEqual("IP", remoteConnection)]
-        )
+    testrunner.Assert.IsEqual("0.0.0.0", localIP);
+    testrunner.Assert.IsEqual("IP", remoteConnection);
 });
 
 
@@ -22,11 +20,9 @@ testrunner.Test("Should Create Connection To IP", function(){
     var endFunction = function(){};
     var dataFunction = function(){};
     var connection = clientConfiguration.createConnection(ip, net, {connection_end:endFunction, connection_data:dataFunction})
-    var asserts = [];
     
-    asserts.push(testrunner.Assert.IsEqual("Connected to Ip:"+ip, connection.state));
-    asserts.push(testrunner.Assert.IsEqual(2, connection.events.length));
-    asserts.push(testrunner.Assert.IsEqual(dataFunction, connection.getEvent("data")));
-    asserts.push(testrunner.Assert.IsEqual(endFunction, connection.getEvent("end")));
-    return testrunner.Assert.And(asserts);
+    testrunner.Assert.IsEqual("Connected to Ip:"+ip, connection.state);
+    testrunner.Assert.IsEqual(2, connection.events.length);
+    testrunner.Assert.IsEqual(dataFunction, connection.getEvent("data"));
+    testrunner.Assert.IsEqual(endFunction, connection.getEvent("end"));
 })

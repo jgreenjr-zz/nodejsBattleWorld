@@ -11,10 +11,14 @@ function GameManagerObject(events){
     var games = [];
     this.CreateGame = function(player1, player2){
        
-        player1.socket.on("data", events.player_turn)
+        player1.socket.once("data", events.player_turn)
         
-        player2.socket.on("data", events.player_turn)
+        player2.socket.once("data", events.player_turn)
         var g = gameFactory.CreateGame(player1, player2);
+        this.Add(g);
+    }
+    
+    this.Add = function(g){
         games.push(g);
     }
     
@@ -23,12 +27,17 @@ function GameManagerObject(events){
     }
     
     this.FindBySocket = function(socket){
-        for(var i = 0; i < this.games.length; i++){
-            if(this.games[i].player1.socket == socket||
-                this.games[i].player2.socket == socket){
-                return this.games[i];
+        for(var i = 0; i < games.length; i++){
+            if(games[i].player1.socket == socket||
+                games[i].player2.socket == socket){
+                return games[i];
             }
         }
         return null;
     };
+    
+    this.Remove = function(game){
+        var index = games.indexOf(game);
+        games.splice(index, 1);
+    }
 }

@@ -18,25 +18,17 @@ testrunner.Test("Should create a game for 2 players", function(){
 	var player2 = createFakePlayer();
 	
 	gm.CreateGame(player1, player2);
-	
-	var asserts = [];
-	asserts.push(testrunner.Assert.IsEqual(1, gm.length()));
-	
-	return testrunner.Assert.And(asserts);
+	testrunner.Assert.IsEqual(1, gm.length())
 });
 
 testrunner.Test("Should be able to find game based off player socket", function(){
     var gm = gameManager.CreateManager({});
     
-    var player1 = createFakePlayer();
-    var player2 = createFakePlayer();
-    player1.socket = 1;
-    var game = gameFactory.CreateGame(player1, player2);
-    gm.games = [game];
-    
+    var game = {player1: {socket:1}, player2: {socket:2}};
+    gm.Add(game)
     var result = gm.FindBySocket(1);
     
-	return testrunner.Assert.IsEqual(game, result);
+	testrunner.Assert.IsEqual(game, result);
     
 })
 
@@ -44,14 +36,22 @@ testrunner.Test("Should add play turn to data on socket", function(){
 
     var gm = gameManager.CreateManager({player_turn: function(){/*asdf*/}});
     
-      var player1 = createFakePlayer();
+    var player1 = createFakePlayer();
     var player2 = createFakePlayer();
     
-    var game = gm.CreateGame(player1, player2);
+    gm.CreateGame(player1, player2);
    
-   	var asserts = [];
-	asserts.push(testrunner.Assert.IsEqual(1, player1.socket.events.length));
-	asserts.push(testrunner.Assert.IsEqual(1, player2.socket.events.length));
-	
-	return testrunner.Assert.And(asserts);
+   	testrunner.Assert.IsEqual(1, player1.socket.events.length);
+	testrunner.Assert.IsEqual(1, player2.socket.events.length);
+});
+
+testrunner.Test("Should remove game", function(){
+    var gm = gameManager.CreateManager({});
+    
+    var player1 = createFakePlayer();
+    var player2 = createFakePlayer();
+    var game = {text:"asdf"};
+    gm.Add(game);
+    gm.Remove(game);
+    testrunner.Assert.IsEqual(0, gm.length());
 });
